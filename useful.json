@@ -1,0 +1,14 @@
+[
+	{
+		"command": "kitty &",
+		"key": 36
+	},
+	{
+		"command": "kitty musikcube &",
+		"key": 37
+	},
+	{
+		"command": "DISPLAY=:0 cider &",
+		"key": 38
+	}
+]

@@ -48,20 +48,24 @@ int main(int argc, char** argv){
 			if(midi.justChangedPort)
 				continue;//wait just a bit after changing ports to prevent old midi events from being tracked
 
-			if(message.size() < 2)
+			if(message.size() < 3)
 				continue;
 
-			if(!(message[0] == 0x99 || message[0] == 0x90))//not sure why some devices make different note on events (haven't looked at the midi spec or anything though)
+			uint8_t type = message[0];
+			uint8_t note = message[1];
+			uint8_t velocity = message[2];
+			if constexpr(midiMessageNotes) std::cout<<"midi type: "<<std::hex<<(int)type<<" note: "<<(int)note<<" velocity: "<<(int)velocity<<std::endl;
+			if(!(type == 0x99 || type == 0x90) || velocity < 0x20)//not sure why some devices make different note on events (haven't looked at the midi spec or anything though)
 				continue;
 
 			if constexpr(midiMessageNotes) std::cout<<"got midi note on for note number "<<std::hex<<(int)message[1]<<std::endl;
 
-			lastNote = message[1];
+			lastNote = note;
 			lastNoteTime = midi.lastMessageTime;
 			lastNoteDeltaTime = midi.lastMessageDeltaTime;
 
 			for(auto& command : commands)
-				if(command.first == message[1])
+				if(command.first == note)
 					system(command.second.c_str());
 
 		}
